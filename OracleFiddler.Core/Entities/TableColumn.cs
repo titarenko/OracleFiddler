@@ -8,6 +8,10 @@
 
         public virtual int DataLength { get; set; }
 
+        public virtual int DataPrecision { get; set; }
+
+        public virtual int DataScale { get; set; }
+
         public virtual bool IsNullable { get; set; }
     }
 }

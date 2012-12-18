@@ -59,9 +59,11 @@
     <Compile Include="Entities\Identified.cs" />
     <Compile Include="Entities\Table.cs" />
     <Compile Include="Entities\TableColumn.cs" />
+    <Compile Include="Infrastructure\StringExtensions.cs" />
     <Compile Include="Mappings\TableColumnMapping.cs" />
     <Compile Include="Mappings\TableMapping.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\EntityGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

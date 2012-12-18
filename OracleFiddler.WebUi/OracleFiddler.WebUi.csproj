@@ -83,6 +83,10 @@
     </Compile>
     <Compile Include="Infrastructure\Profiling\DbCommandProxy.cs" />
     <Compile Include="Infrastructure\Profiling\ProfiledOracleClientDriver.cs" />
+    <Compile Include="Models\SchemaExplorer\IndexViewModel.cs" />
+    <Compile Include="Models\SchemaExplorer\SummaryViewModel.cs" />
+    <Compile Include="Models\SchemaExplorer\TableColumnViewModel.cs" />
+    <Compile Include="Models\SchemaExplorer\TableViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -110,9 +114,7 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>

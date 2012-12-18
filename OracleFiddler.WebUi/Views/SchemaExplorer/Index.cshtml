@@ -1,14 +1,14 @@
-﻿@model IEnumerable<OracleFiddler.Core.Entities.Table>
+﻿@model OracleFiddler.WebUi.Models.SchemaExplorer.IndexViewModel
            
 <div class="row-fluid">
     <div class="span2">
         <dl>
             <dt>Total Tables</dt>
-            <dd>@Model.Count()</dd>
+            <dd>@Model.Summary.TablesCount</dd>
             <dt>Average Number of Columns</dt>
-            <dd>@Math.Round(Model.Average(x => x.Columns.Count))</dd>
+            <dd>@Model.Summary.AverageColumnsPerTable</dd>
             <dt>Max Number of Columns</dt>
-            <dd>@Model.Max(x => x.Columns.Count)</dd>
+            <dd>@Model.Summary.MaxColumnsPerTable</dd>
         </dl>
     </div>
     <div class="span10">
@@ -19,11 +19,12 @@
                     <th>Table</th>
                     <th>Column</th>
                     <th>Data Type</th>
-                    <th>Length</th>
+                    <th>Is Nullable</th>
+                    <th>Entity</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach(var table in Model.Where(x => x.Columns.Any()))
+                @foreach(var table in Model.Tables.Where(x => x.Columns.Any()))
                 {
                     var firstColumn = table.Columns.First();
             
@@ -32,7 +33,10 @@
                         <td rowspan="@table.Columns.Count">@table.Name</td>
                         <td>@firstColumn.Name</td>
                         <td>@firstColumn.DataType</td>
-                        <td class="number">@firstColumn.DataLength</td>
+                        <td>@firstColumn.IsNullable</td>
+                        <td rowspan="@table.Columns.Count">
+                            <pre>@table.EntityCode</pre>
+                        </td>
                     </tr>
             
                     foreach (var column in table.Columns.Skip(1))
@@ -40,7 +44,7 @@
                         <tr>
                             <td>@column.Name</td>
                             <td>@column.DataType</td>
-                            <td class="number">@column.DataLength</td>
+                            <td>@column.IsNullable</td>
                         </tr>
                     }
                 }
