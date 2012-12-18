@@ -33,14 +33,13 @@ namespace OracleFiddler.Core.Services
                 IsClass = true,
                 Attributes = MemberAttributes.Public
             };
-            declaration.Members.AddRange(table.Columns.Select(x => new CodeMemberProperty
-            {
-                Name = x.Name,
-                Type = new CodeTypeReference(GuessType(x)),
-                Attributes = MemberAttributes.Public,
-                HasGet = true,
-                HasSet = true
-            }).Cast<CodeTypeMember>().ToArray());
+            declaration.Members.AddRange(
+                table.Columns
+                    .Select(x => new CodeSnippetTypeMember(string.Format(
+                        "\t\tpublic virtual {0} {1} {{ get; set; }}",
+                        GuessType(x),
+                        x.Name.FromSnakeUpperToPascalCase())))
+                    .Cast<CodeTypeMember>().ToArray());
             return declaration;
         }
 
