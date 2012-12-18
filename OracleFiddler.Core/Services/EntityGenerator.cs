@@ -1,8 +1,4 @@
-﻿using System;
-using System.CodeDom;
-using System.IO;
-using System.Linq;
-using Microsoft.CSharp;
+﻿using System.Text;
 using OracleFiddler.Core.Entities;
 using OracleFiddler.Core.Infrastructure;
 using Table = OracleFiddler.Core.Entities.Table;
@@ -13,54 +9,43 @@ namespace OracleFiddler.Core.Services
     {
         public string Generate(Table table)
         {
-            var unit = new CodeCompileUnit();
-            var ns = new CodeNamespace("Entities");
-            unit.Namespaces.Add(ns);
-            ns.Types.Add(CreateClass(table));
-            using (var stream = new StreamWriter(new MemoryStream()))
+            var code = new StringBuilder();
+
+            code.AppendLine("public class " + table.Name.FromSnakeUpperToPascalCase());
+            code.AppendLine("{");
+
+            foreach (var column in table.Columns)
             {
-                new CSharpCodeProvider().GenerateCodeFromCompileUnit(unit, stream, null);
-                stream.Flush();
-                stream.BaseStream.Position = 0;
-                return new StreamReader(stream.BaseStream).ReadToEnd();
+                code.AppendFormat(
+                    "\tpublic virtual {0} {1} {{ get; set; }}",
+                    GuessType(column),
+                    column.Name.FromSnakeUpperToPascalCase());
+                code.AppendLine();
             }
+
+            code.AppendLine("}");
+
+            return code.ToString();
         }
 
-        private CodeTypeDeclaration CreateClass(Table table)
-        {
-            var declaration = new CodeTypeDeclaration(table.Name.FromSnakeUpperToPascalCase())
-            {
-                IsClass = true,
-                Attributes = MemberAttributes.Public
-            };
-            declaration.Members.AddRange(
-                table.Columns
-                    .Select(x => new CodeSnippetTypeMember(string.Format(
-                        "\t\tpublic virtual {0} {1} {{ get; set; }}",
-                        GuessType(x),
-                        x.Name.FromSnakeUpperToPascalCase())))
-                    .Cast<CodeTypeMember>().ToArray());
-            return declaration;
-        }
-
-        private Type GuessType(TableColumn column)
+        private string GuessType(TableColumn column)
         {
             switch (column.DataType)
             {
                 case "NUMBER":
                     return column.DataScale == 0
-                               ? (column.IsNullable ? typeof (int?) : typeof (int))
-                               : (column.IsNullable ? typeof (decimal?) : typeof(decimal));
+                               ? (column.IsNullable ? "int?" : "int")
+                               : (column.IsNullable ? "decimal?" : "decimal");
                 case "VARCHAR2":
-                    return typeof (string);
+                    return "string";
                 case "CHAR":
                     return column.DataLength == 1
-                               ? (column.IsNullable ? typeof (bool?) : typeof (bool))
-                               : typeof (string);
+                               ? (column.IsNullable ? "bool?" : "bool")
+                               : "string";
                 case "DATE":
-                    return column.IsNullable ? typeof (DateTime?) : typeof (DateTime);
+                    return column.IsNullable ? "DateTime?" : "DateTime";
                 default:
-                    return typeof (string);
+                    return "string";
             }
         }
     }
