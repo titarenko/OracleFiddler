@@ -1,0 +1,48 @@
+﻿@model IEnumerable<OracleFiddler.Core.Entities.Table>
+           
+<div class="row-fluid">
+    <div class="span2">
+        <dl>
+            <dt>Total Tables</dt>
+            <dd>@Model.Count()</dd>
+            <dt>Average Number of Columns</dt>
+            <dd>@Math.Round(Model.Average(x => x.Columns.Count))</dd>
+            <dt>Max Number of Columns</dt>
+            <dd>@Model.Max(x => x.Columns.Count)</dd>
+        </dl>
+    </div>
+    <div class="span10">
+        <table id="grid" class="table table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th>Table</th>
+                    <th>Column</th>
+                    <th>Data Type</th>
+                    <th>Length</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var table in Model)
+                {
+                    var firstColumn = table.Columns.First();
+            
+                    <tr>
+                        <td rowspan="@table.Columns.Count">@table.Name</td>
+                        <td>@firstColumn.Name</td>
+                        <td>@firstColumn.DataType</td>
+                        <td class="number">@firstColumn.DataLength</td>
+                    </tr>
+            
+                    foreach (var column in table.Columns.Skip(1))
+                    {
+                        <tr>
+                            <td>@column.Name</td>
+                            <td>@column.DataType</td>
+                            <td class="number">@column.DataLength</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
