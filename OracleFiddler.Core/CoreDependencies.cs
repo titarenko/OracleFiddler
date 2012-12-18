@@ -7,7 +7,7 @@ using OracleFiddler.Core.Entities;
 
 namespace OracleFiddler.Core
 {
-    public class CoreDependencies : Module
+    public class CoreDependencies<TDirver> : Module where TDirver : IDriver
     {
         protected override void Load(ContainerBuilder builder)
         {
@@ -17,7 +17,7 @@ namespace OracleFiddler.Core
                                    .Configure()
                                    .Database(OracleDataClientConfiguration
                                                  .Oracle10
-                                                 .Driver<OracleClientDriver>()
+                                                 .Driver<TDirver>()
                                                  .ConnectionString(x => x.FromConnectionStringWithKey("default")))
                                    .Mappings(x => x.FluentMappings.AddFromAssemblyOf<Identified>())
                                    .BuildSessionFactory())

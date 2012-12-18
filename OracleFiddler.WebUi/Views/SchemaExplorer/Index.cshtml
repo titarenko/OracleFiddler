@@ -15,6 +15,7 @@
         <table id="grid" class="table table-condensed table-hover">
             <thead>
                 <tr>
+                    <th>Owner</th>
                     <th>Table</th>
                     <th>Column</th>
                     <th>Data Type</th>
@@ -22,11 +23,12 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach(var table in Model)
+                @foreach(var table in Model.Where(x => x.Columns.Any()))
                 {
                     var firstColumn = table.Columns.First();
             
                     <tr>
+                        <td rowspan="@table.Columns.Count">@table.Owner</td>
                         <td rowspan="@table.Columns.Count">@table.Name</td>
                         <td>@firstColumn.Name</td>
                         <td>@firstColumn.DataType</td>

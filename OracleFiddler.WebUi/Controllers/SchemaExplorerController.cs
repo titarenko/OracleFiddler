@@ -19,9 +19,10 @@ namespace OracleFiddler.WebUi.Controllers
         {
             return View(session
                 .Query<Table>()
-                .Where(x => x.Owner == "UBSH")
-                .OrderBy(x => x.Name)
-                .Fetch(x => x.Columns));
+                .OrderBy(x => x.Owner)
+                .ThenBy(x => x.Name)
+                .Fetch(x => x.Columns)
+                .ToList());
         }
     }
 }

@@ -5,17 +5,47 @@ using Autofac;
 using Autofac.Integration.Mvc;
 using NHibernate;
 using OracleFiddler.Core;
+using OracleFiddler.WebUi.Infrastructure.Profiling;
+using StackExchange.Profiling;
 
 namespace OracleFiddler.WebUi
 {
     public class MvcApplication : System.Web.HttpApplication
     {
-        public static void RegisterGlobalFilters(GlobalFilterCollection filters)
+        public MvcApplication()
         {
-            filters.Add(new HandleErrorAttribute());
+            BeginRequest += (sender, args) =>
+            {
+                if (Request.IsLocal)
+                {
+                    MiniProfiler.Start();
+                }
+            };
+
+            EndRequest += (sender, args) => MiniProfiler.Stop();
         }
 
-        public static void RegisterRoutes(RouteCollection routes)
+        protected void Application_Start()
+        {
+            AreaRegistration.RegisterAllAreas();
+
+            RegisterGlobalFilters(GlobalFilters.Filters);
+            RegisterRoutes(RouteTable.Routes);
+
+            var builder = new ContainerBuilder();
+
+            builder.RegisterControllers(Assembly.GetExecutingAssembly());
+            builder.RegisterModule(new CoreDependencies<ProfiledOracleClientDriver>());
+
+            builder
+                .Register(x => x.Resolve<ISessionFactory>().OpenSession())
+                .As<ISession>()
+                .InstancePerHttpRequest();
+
+            DependencyResolver.SetResolver(new AutofacDependencyResolver(builder.Build()));
+        }
+
+        private void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
@@ -30,24 +60,9 @@ namespace OracleFiddler.WebUi
                 });
         }
 
-        protected void Application_Start()
+        private void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
-            AreaRegistration.RegisterAllAreas();
-
-            RegisterGlobalFilters(GlobalFilters.Filters);
-            RegisterRoutes(RouteTable.Routes);
-
-            var builder = new ContainerBuilder();
-
-            builder.RegisterControllers(Assembly.GetExecutingAssembly());
-            builder.RegisterModule(new CoreDependencies());
-
-            builder
-                .Register(x => x.Resolve<ISessionFactory>().OpenSession())
-                .As<ISession>()
-                .InstancePerHttpRequest();
-
-            DependencyResolver.SetResolver(new AutofacDependencyResolver(builder.Build()));
+            filters.Add(new HandleErrorAttribute());
         }
     }
 }
