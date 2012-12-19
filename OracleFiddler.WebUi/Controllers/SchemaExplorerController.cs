@@ -24,7 +24,8 @@ namespace OracleFiddler.WebUi.Controllers
                 .Query<Table>()
                 .OrderBy(x => x.Owner)
                 .ThenBy(x => x.Name)
-                .Fetch(x => x.Columns)
+                .FetchMany(x => x.Columns)
+                .ThenFetch(x => x.Constraints)
                 .ToList();
 
             var model = new IndexViewModel
@@ -37,7 +38,8 @@ namespace OracleFiddler.WebUi.Controllers
                     {
                         Name = c.Name,
                         DataType = c.DataType,
-                        IsNullable = c.IsNullable
+                        IsNullable = c.IsNullable,
+                        Constraints = c.Constraints.Select(z => z.Name).ToList()
                     }).ToList(),
                     EntityCode = new EntityGenerator().Generate(x)
                 }).ToList(),

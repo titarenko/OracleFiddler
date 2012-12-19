@@ -8,10 +8,11 @@ namespace OracleFiddler.Core.Mappings
         public TableMapping()
         {
             Table("ALL_TABLES");
-            Id(x => x.Name, "TABLE_NAME");
-            Map(x => x.Owner, "OWNER");
+            CompositeId()
+                .KeyProperty(x => x.Owner, "OWNER")
+                .KeyProperty(x => x.Name, "TABLE_NAME");
             Map(x => x.IsValid).Formula("CASE WHEN status = 'VALID' THEN 1 ELSE 0 END").CustomType<bool>();
-            HasMany(x => x.Columns).KeyColumn("TABLE_NAME");
+            HasMany(x => x.Columns).KeyColumns.Add("OWNER", "TABLE_NAME").AsSet();
         }
     }
 }

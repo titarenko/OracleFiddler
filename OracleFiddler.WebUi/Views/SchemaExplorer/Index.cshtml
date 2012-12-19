@@ -1,4 +1,5 @@
-﻿@model OracleFiddler.WebUi.Models.SchemaExplorer.IndexViewModel
+﻿@using OracleFiddler.Core.Infrastructure
+@model OracleFiddler.WebUi.Models.SchemaExplorer.IndexViewModel
            
 <div class="row-fluid">
     <div class="span2">
@@ -20,6 +21,7 @@
                     <th>Column</th>
                     <th>Data Type</th>
                     <th>Is Nullable</th>
+                    <th>Constraints</th>
                     <th>Entity</th>
                 </tr>
             </thead>
@@ -34,6 +36,7 @@
                         <td>@firstColumn.Name</td>
                         <td>@firstColumn.DataType</td>
                         <td>@firstColumn.IsNullable</td>
+                        <td>@firstColumn.Constraints.JoinUsing(", ")</td>
                         <td rowspan="@table.Columns.Count">
                             <pre>@table.EntityCode</pre>
                         </td>
@@ -45,6 +48,7 @@
                             <td>@column.Name</td>
                             <td>@column.DataType</td>
                             <td>@column.IsNullable</td>
+                            <td>@column.Constraints.JoinUsing(", ")</td>
                         </tr>
                     }
                 }

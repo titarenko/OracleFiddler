@@ -56,10 +56,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CoreDependencies.cs" />
+    <Compile Include="Entities\Constraint.cs" />
+    <Compile Include="Entities\ConstraintType.cs" />
     <Compile Include="Entities\Identified.cs" />
     <Compile Include="Entities\Table.cs" />
     <Compile Include="Entities\TableColumn.cs" />
     <Compile Include="Infrastructure\StringExtensions.cs" />
+    <Compile Include="Mappings\ConstraintMapping.cs" />
     <Compile Include="Mappings\TableColumnMapping.cs" />
     <Compile Include="Mappings\TableMapping.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
