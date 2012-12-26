@@ -114,12 +114,14 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Views\SchemaExplorer\Copy of Index.cshtml" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\SchemaExplorer\Index.cshtml" />
+    <Content Include="Views\SchemaExplorer\Schemas.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OracleFiddler.Core\OracleFiddler.Core.csproj">

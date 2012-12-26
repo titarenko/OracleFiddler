@@ -18,40 +18,54 @@ namespace OracleFiddler.WebUi.Controllers
             this.session = session;
         }
 
-        public ActionResult Index()
+        public ActionResult Schemas()
         {
-            var tables = session
-                .Query<Table>()
-                .OrderBy(x => x.Owner)
-                .ThenBy(x => x.Name)
-                .FetchMany(x => x.Columns)
-                .ThenFetch(x => x.Constraints)
-                .ToList();
+            return View(session
+                            .Query<Table>()
+                            .OrderBy(x => x.Owner)
+                            .Select(x => x.Owner)
+                            .Distinct());
+        }
 
-            var model = new IndexViewModel
-            {
-                Tables = tables.Select(x => new TableViewModel
-                {
-                    Owner = x.Owner,
-                    Name = x.Name,
-                    Columns = x.Columns.Select(c => new TableColumnViewModel
-                    {
-                        Name = c.Name,
-                        DataType = c.DataType,
-                        IsNullable = c.IsNullable,
-                        Constraints = c.Constraints.Select(z => z.Name).ToList()
-                    }).ToList(),
-                    EntityCode = new EntityGenerator().Generate(x)
-                }).ToList(),
-                Summary = new SummaryViewModel
-                {
-                    TablesCount = tables.Count,
-                    AverageColumnsPerTable = (int) Math.Round(tables.Average(x => x.Columns.Count)),
-                    MaxColumnsPerTable = tables.Max(x => x.Columns.Count)
-                }
-            };
+        //public ActionResult Index()
+        //{
+        //    var tables = session
+        //        .Query<Table>()
+        //        .OrderBy(x => x.Owner)
+        //        .ThenBy(x => x.Name)
+        //        .FetchMany(x => x.Columns)
+        //        .ThenFetch(x => x.Constraints)
+        //        .ToList();
 
-            return View(model);
+        //    var model = new IndexViewModel
+        //    {
+        //        Tables = tables.Select(x => new TableViewModel
+        //        {
+        //            Owner = x.Owner,
+        //            Name = x.Name,
+        //            Columns = x.Columns.Select(c => new TableColumnViewModel
+        //            {
+        //                Name = c.Name,
+        //                DataType = c.DataType,
+        //                IsNullable = c.IsNullable,
+        //                Constraints = c.Constraints.Select(z => z.Name).ToList()
+        //            }).ToList(),
+        //            EntityCode = new EntityGenerator().Generate(x)
+        //        }).ToList(),
+        //        Summary = new SummaryViewModel
+        //        {
+        //            TablesCount = tables.Count,
+        //            AverageColumnsPerTable = (int) Math.Round(tables.Average(x => x.Columns.Count)),
+        //            MaxColumnsPerTable = tables.Max(x => x.Columns.Count)
+        //        }
+        //    };
+
+        //    return View(model);
+        //}
+
+        public ActionResult Schema(string id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

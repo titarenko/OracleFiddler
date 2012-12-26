@@ -55,7 +55,7 @@ namespace OracleFiddler.WebUi
                 new
                 {
                     controller = "SchemaExplorer",
-                    action = "Index",
+                    action = "Schemas",
                     id = UrlParameter.Optional
                 });
         }
