@@ -65,6 +65,19 @@ namespace OracleFiddler.WebUi.Controllers
 
         public ActionResult Schema(string id)
         {
+            return View(session
+                            .Query<Table>()
+                            .Where(x => x.Owner == id)
+                            .OrderBy(x => x.Name)
+                            .Select(x => new TableViewModel
+                            {
+                                Name = x.Name,
+                                Owner = x.Owner
+                            }));
+        }
+
+        public ActionResult Table(string id, string owner)
+        {
             throw new NotImplementedException();
         }
     }

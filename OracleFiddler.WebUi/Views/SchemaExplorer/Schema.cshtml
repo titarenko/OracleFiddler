@@ -1,0 +1,11 @@
+﻿@model IEnumerable<TableViewModel>
+           
+<div class="row-fluid">
+    <h1>Tables</h1>
+    <ul>
+        @foreach (var item in Model)
+        {
+            <li>@Html.ActionLink(item.Name, "Table", new {id = item.Name, owner = item.Owner})</li>
+        }
+    </ul>
+</div>
