@@ -78,7 +78,25 @@ namespace OracleFiddler.WebUi.Controllers
 
         public ActionResult Table(string id, string owner)
         {
-            throw new NotImplementedException();
+            var table = session
+                .Query<Table>()
+                .Where(x => x.Name == id && x.Owner == owner)
+                .FetchMany(x => x.Columns)
+                .ThenFetch(x => x.Constraints)
+                .ToList()
+                .First();
+
+            return View(new TableViewModel
+            {
+                Columns = table.Columns.Select(column => new TableColumnViewModel
+                {
+                    Name = column.Name,
+                    DataType = column.DataType,
+                    IsNullable = column.IsNullable,
+                    Constraints = column.Constraints.Select(constraint => constraint.Name).ToList()
+                }).ToList(),
+                EntityCode = new EntityGenerator().Generate(table)
+            });
         }
     }
 }

@@ -1,0 +1,27 @@
+﻿@model TableViewModel
+
+<div class="row-fluid">
+    <h1>Columns</h1>
+    <table class="table table-condensed table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Data Type</th>
+                <th>Is Nullable</th>
+                <th>Constraints</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Columns)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.DataType</td>
+                    <td>@item.IsNullable</td>
+                    <td>@item.Constraints.JoinUsing(", ")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <pre>@Model.EntityCode</pre>
+</div>
