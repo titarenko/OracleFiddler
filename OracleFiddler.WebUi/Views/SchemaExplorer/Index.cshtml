@@ -23,6 +23,7 @@
                     <th>Is Nullable</th>
                     <th>Constraints</th>
                     <th>Entity</th>
+                    <th>Mapping</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,6 +40,9 @@
                         <td>@firstColumn.Constraints.JoinUsing(", ")</td>
                         <td rowspan="@table.Columns.Count">
                             <pre>@table.EntityCode</pre>
+                        </td>
+                        <td rowspan="@table.Columns.Count">
+                            <pre>@table.MappingCode</pre>
                         </td>
                     </tr>
             

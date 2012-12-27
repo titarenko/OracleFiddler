@@ -41,7 +41,8 @@ namespace OracleFiddler.WebUi.Controllers
                         IsNullable = c.IsNullable,
                         Constraints = c.Constraints.Select(z => z.Name).ToList()
                     }).ToList(),
-                    EntityCode = new EntityGenerator().Generate(x)
+                    EntityCode = new EntityGenerator().Generate(x),
+                    MappingCode = new MappingGenerator().Generate(x)
                 }).ToList(),
                 Summary = new SummaryViewModel
                 {
