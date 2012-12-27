@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 using NHibernate;
 using NHibernate.Linq;
@@ -18,85 +19,115 @@ namespace OracleFiddler.WebUi.Controllers
             this.session = session;
         }
 
-        public ActionResult Schemas()
+        public ActionResult Index(string schema, string table)
         {
-            return View(session
-                            .Query<Table>()
-                            .OrderBy(x => x.Owner)
-                            .Select(x => x.Owner)
-                            .Distinct());
+            var tables = GetTablesProjections();
+            var schemas = GetSchemas(tables);
+
+            if (schemas.Any())
+            {
+                if (schema == null)
+                {
+                    schema = schemas.First().Key;
+                }
+                if (table == null)
+                {
+                    table = schemas[schema].First();
+                }
+            }
+
+            var tableEntity = GetTable(schema, table);
+
+            return View(new IndexViewModel
+            {
+                Summary = GetSummary(tables),
+                SchemaSummary = GetSummary(tables.Where(x => x.Owner == schema).ToList()),
+                Schemas = schemas.Select(x => GetSchemaViewModel(schema, table, x)).ToList(),
+                Table = GetTableViewModel(tableEntity)
+            });
         }
 
-        //public ActionResult Index()
-        //{
-        //    var tables = session
-        //        .Query<Table>()
-        //        .OrderBy(x => x.Owner)
-        //        .ThenBy(x => x.Name)
-        //        .FetchMany(x => x.Columns)
-        //        .ThenFetch(x => x.Constraints)
-        //        .ToList();
-
-        //    var model = new IndexViewModel
-        //    {
-        //        Tables = tables.Select(x => new TableViewModel
-        //        {
-        //            Owner = x.Owner,
-        //            Name = x.Name,
-        //            Columns = x.Columns.Select(c => new TableColumnViewModel
-        //            {
-        //                Name = c.Name,
-        //                DataType = c.DataType,
-        //                IsNullable = c.IsNullable,
-        //                Constraints = c.Constraints.Select(z => z.Name).ToList()
-        //            }).ToList(),
-        //            EntityCode = new EntityGenerator().Generate(x)
-        //        }).ToList(),
-        //        Summary = new SummaryViewModel
-        //        {
-        //            TablesCount = tables.Count,
-        //            AverageColumnsPerTable = (int) Math.Round(tables.Average(x => x.Columns.Count)),
-        //            MaxColumnsPerTable = tables.Max(x => x.Columns.Count)
-        //        }
-        //    };
-
-        //    return View(model);
-        //}
-
-        public ActionResult Schema(string id)
+        private static TableViewModel GetTableViewModel(Table tableEntity)
         {
-            return View(session
-                            .Query<Table>()
-                            .Where(x => x.Owner == id)
-                            .OrderBy(x => x.Name)
-                            .Select(x => new TableViewModel
-                            {
-                                Name = x.Name,
-                                Owner = x.Owner
-                            }));
+            return new TableViewModel
+            {
+                Name = tableEntity.Name,
+                Owner = tableEntity.Owner,
+                Columns = tableEntity.Columns.Select(c => new TableColumnViewModel
+                {
+                    Name = c.Name,
+                    DataType = c.DataType,
+                    IsNullable = c.IsNullable,
+                    Constraints = c.Constraints.Select(co => co.Name).ToList()
+                }).ToList(),
+                EntityCode = new EntityGenerator().Generate(tableEntity),
+                MappingCode = new MappingGenerator().Generate(tableEntity)
+            };
         }
 
-        public ActionResult Table(string id, string owner)
+        private static TabViewModel GetSchemaViewModel(string schema, string table, KeyValuePair<string, List<string>> x)
         {
-            var table = session
-                .Query<Table>()
-                .Where(x => x.Name == id && x.Owner == owner)
+            return new TabViewModel
+            {
+                Name = x.Key,
+                IsSelected =  x.Key == schema,
+                Items = x.Value.Select(t => new TabViewModel
+                {
+                    Name = t,
+                    IsSelected = t == table
+                }).ToList()
+            };
+        }
+
+        private Table GetTable(string schema, string table)
+        {
+            return session.Query<Table>()
+                .Where(x => x.Name == table && x.Owner == schema)
                 .FetchMany(x => x.Columns)
                 .ThenFetch(x => x.Constraints)
                 .ToList()
                 .First();
+        }
 
-            return View(new TableViewModel
-            {
-                Columns = table.Columns.Select(column => new TableColumnViewModel
+        private Dictionary<string, List<string>> GetSchemas(IEnumerable<TableProjection> tables)
+        {
+            return tables
+                .GroupBy(x => x.Owner)
+                .ToDictionary(x => x.Key, x => x.Select(z => z.Name).ToList());
+        }
+
+        private List<TableProjection> GetTablesProjections()
+        {
+            return session
+                .Query<Table>()
+                .Select(x => new TableProjection
                 {
-                    Name = column.Name,
-                    DataType = column.DataType,
-                    IsNullable = column.IsNullable,
-                    Constraints = column.Constraints.Select(constraint => constraint.Name).ToList()
-                }).ToList(),
-                EntityCode = new EntityGenerator().Generate(table)
-            });
+                    Owner = x.Owner,
+                    Name = x.Name,
+                    ColumnsCount = x.Columns.Count
+                })
+                .OrderBy(x => x.Owner)
+                .ThenBy(x => x.Name)
+                .ToList();
+        }
+
+        private static SummaryViewModel GetSummary(ICollection<TableProjection> tables)
+        {
+            return new SummaryViewModel
+            {
+                TablesCount = tables.Count,
+                AverageColumnsPerTable = (int) Math.Round(tables.Average(x => x.ColumnsCount)),
+                MaxColumnsPerTable = tables.Max(x => x.ColumnsCount)
+            };
+        }
+
+        class TableProjection
+        {
+            public string Name { get; set; }
+
+            public string Owner { get; set; }
+
+            public int ColumnsCount { get; set; }
         }
     }
 }

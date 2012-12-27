@@ -1,0 +1,50 @@
+﻿@model IndexViewModel
+
+@helper RenderSummary(string name, SummaryViewModel summary)
+{
+    <dl class="span2">
+        <dt>@name Tables</dt>
+        <dd>@summary.TablesCount</dd>
+        <dt>Average Number of Columns</dt>
+        <dd>@summary.AverageColumnsPerTable</dd>
+        <dt>Max Number of Columns</dt>
+        <dd>@summary.MaxColumnsPerTable</dd>
+    </dl>
+}
+<div class="row-fluid">
+    @RenderSummary("Total", Model.SchemaSummary)
+    @RenderSummary(Model.Table.Owner, Model.SchemaSummary)
+</div>
+<ul class="nav nav-tabs">
+    @foreach(var schema in Model.Schemas)
+    {
+        <li @Html.ActiveIf(schema.IsSelected)>@Html.ActionLink(schema.Name, "Index", new {schema = schema.Name})</li>
+    }
+</ul>
+<div class="tab-content">
+    @foreach (var schema in Model.Schemas)
+    {
+        <div class="tab-pane tabbable tabs-below @if (schema.IsSelected) {@Html.Raw("active")}">
+            @if (schema.IsSelected)
+            {
+                <div class="tab-content">
+                    <div class="tab-pane active">
+                        @{ Html.RenderPartial("Table", Model.Table); }
+                    </div>
+                </div>
+            }
+            <ul class="nav nav-pills">
+                @foreach (var table in schema.Items)
+                {
+                    <li @Html.ActiveIf(table.IsSelected)>
+                        @Html.ActionLink(table.Name, "Index", new
+                        {
+                            schema = schema.Name,
+                            table = table.Name
+                        })
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</div>

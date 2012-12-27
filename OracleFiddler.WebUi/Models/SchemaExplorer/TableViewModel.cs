@@ -11,5 +11,7 @@ namespace OracleFiddler.WebUi.Models.SchemaExplorer
         public string EntityCode { get; set; }
 
         public IList<TableColumnViewModel> Columns { get; set; }
+
+        public string MappingCode { get; set; }
     }
 }

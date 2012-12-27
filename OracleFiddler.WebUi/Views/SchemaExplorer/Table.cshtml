@@ -1,27 +1,29 @@
 ﻿@model TableViewModel
-
+           
 <div class="row-fluid">
-    <h1>Columns</h1>
-    <table class="table table-condensed table-hover">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Data Type</th>
-                <th>Is Nullable</th>
-                <th>Constraints</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Columns)
-            {
+    <div class="span4">
+        <table class="table table-condensed table-hover">
+            <thead>
                 <tr>
-                    <td>@item.Name</td>
-                    <td>@item.DataType</td>
-                    <td>@item.IsNullable</td>
-                    <td>@item.Constraints.JoinUsing(", ")</td>
+                    <th>Name</th>
+                    <th>Data Type</th>
+                    <th>Is Nullable</th>
+                    <th>Constraints</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-    <pre>@Model.EntityCode</pre>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Columns)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.DataType</td>
+                        <td>@item.IsNullable</td>
+                        <td>@item.Constraints.JoinUsing(", ")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="span4"><pre>@Model.EntityCode</pre></div>
+    <div class="span4"><pre>@Model.MappingCode</pre></div>
 </div>

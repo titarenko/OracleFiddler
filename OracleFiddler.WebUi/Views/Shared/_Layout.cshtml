@@ -10,6 +10,15 @@
     </head>
     <body>
         <div class="container-fluid">
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <a class="brand" href="@Url.Content("~")">Oracle Fiddler</a>
+                    <ul class="nav">
+                        <li>@Html.ActionLink("Schema Explorer", "Index", "SchemaExplorer")</li>
+                        <li>@Html.ActionLink("Code Generator", "Index", "CodeGenerator")</li>
+                    </ul>
+                </div>
+            </div>
             @RenderBody()
         </div>
         <script src="@Url.Content("~/Scripts/jquery-1.8.3.min.js")" type="text/javascript"></script>
