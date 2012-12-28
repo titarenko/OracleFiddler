@@ -53,7 +53,7 @@ function saveWebConfig ($config, $path) {
 }
 
 function setConnectionString ($config, $connectionString) {
-	$config.SelectSingleNode("//connectionStrings/add[name='default']).connectionString = $connectionString
+	$config.SelectSingleNode("//connectionStrings/add").connectionString = $connectionString
 }
 
 function showAspNetErrors ($config, $show = $true) {
