@@ -1,7 +1,3 @@
-﻿#grid {
-    width: auto;
-}
-
-.number {
-    text-align: right !important;
+﻿.syntaxhighlighter {
+    overflow: hidden !important;
 }
