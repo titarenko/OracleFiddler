@@ -12,11 +12,11 @@ namespace OracleFiddler.Core.Services
 
             var className = table.Name.GuessCSharpSymbolName();
 
-            code.AppendFormat("public class {0}Mapping", className);
+            code.AppendFormat("public class {0}Mapping : ClassMap<{0}>", className);
             code.AppendLine();
             code.AppendLine("{");
 
-            code.AppendFormat("\tpublic {0}Mapping", className);
+            code.AppendFormat("\tpublic {0}Mapping()", className);
             code.AppendLine();
             code.AppendLine("\t{");
 
